@@ -3,6 +3,8 @@
 # Basic hash table key/value pair
 # '''
 
+# pair.key
+
 
 class Pair:
     def __init__(self, key, value):
@@ -31,6 +33,10 @@ def hash(string, max):  # were also given second parameter 'max'
     for c in string:
         hash = (hash * 33) + ord(c)
     # modulo finds the remainder of division of one number by another
+    # I guess this makes sure the index is not bigger than array length
+
+    # index = hash_function(Key) % array.length
+
     return hash % max
 
 
@@ -40,8 +46,7 @@ def hash(string, max):  # were also given second parameter 'max'
 # If you are overwriting a value with a different key, print a warning.
 # '''
 
-# index = hash_function(Key) % array.length
-# array [index] = value
+
 def hash_table_insert(hash_table, key, value):
     # find index by hashing the key
     index = hash(key, hash_table.capacity)
