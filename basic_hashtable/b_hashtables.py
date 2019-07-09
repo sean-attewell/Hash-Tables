@@ -1,15 +1,13 @@
 
+
 # '''
 # Basic hash table key/value pair
 # '''
-
-# pair.key
-
-
 class Pair:
     def __init__(self, key, value):
         self.key = key
         self.value = value
+        # pointer to next pair
 
 
 # '''
@@ -28,14 +26,10 @@ class BasicHashTable:
 # Fill this in.
 # Research and implement the djb2 hash function
 # '''
-def hash(string, max):  # were also given second parameter 'max'
+def hash(string, max):
     hash = 5381
-    for c in string:
-        hash = (hash * 33) + ord(c)
-    # modulo finds the remainder of division of one number by another
-    # I guess this makes sure the index is not bigger than array length
-
-    # index = hash_function(Key) % array.length
+    for char in string:
+        hash = ((hash << 5) + hash) + ord(char)
 
     return hash % max
 
@@ -45,19 +39,24 @@ def hash(string, max):  # were also given second parameter 'max'
 
 # If you are overwriting a value with a different key, print a warning.
 # '''
-
-
 def hash_table_insert(hash_table, key, value):
-    # find index by hashing the key
-    index = hash(key, hash_table.capacity)
-    # instantiate Pair class
-    p = Pair(key, value)
 
-    # see if there is a value stored at that index
-    if hash_table.storage[index] != None:
-        print("WARNING: Inserting with this key has overwritten an existing insert")
-    # save value to index
-    hash_table.storage[index] = p.value
+    # get the index via the hash function
+    index = hash(key, len(hash_table.storage))
+    # create a new pair using key and value
+    pair = Pair(key, value)
+
+    # hold the stored pair from the hash_table
+    stored_pair = hash_table.storage[index]
+
+    # if there is already a pair at stored_pair
+    if stored_pair is not None:
+        # If you are overwriting a value with a different key, print a warning
+        if stored_pair.key != key:
+            print(f"WARNING: Overwriting value {stored_pair.key} / {stored_pair.value} with {pair.key} / {pair.value}.")
+    
+    # write the pair to the hash_table.storage at the index
+    hash_table.storage[index] = pair
 
 
 # '''
@@ -66,11 +65,13 @@ def hash_table_insert(hash_table, key, value):
 # If you try to remove a value that isn't there, print a warning.
 # '''
 def hash_table_remove(hash_table, key):
+    # get the index via the hash function
+    index = hash(key, len(hash_table.storage))
 
-    # find index by hashing the key
-    index = hash(key, hash_table.capacity)
-    if hash_table.storage[index] == None:
-        print("No value assigned to that key")
+    # if the storage at index is empty or the key can not be found. print error
+    if (hash_table.storage[index] is None or hash_table.storage[index].key != key):
+        print(f"Unable to remove entry with the key: {key}")
+    # otherwise set the storage at index to None
     else:
         hash_table.storage[index] = None
 
@@ -80,14 +81,16 @@ def hash_table_remove(hash_table, key):
 
 # Should return None if the key is not found.
 # '''
-
 def hash_table_retrieve(hash_table, key):
-    index = hash(key, hash_table.capacity)
+    # get the index via the hash function
+    index = hash(key, len(hash_table.storage))
 
-    if hash_table.storage[index] == None:
+    # if the storage at index is empty or the key can not be found. print error
+    if (hash_table.storage[index] is None or hash_table.storage[index].key != key):
+        print(f"Unable to retrieve entry with the key: {key}")
         return None
-    else:
-        return hash_table.storage[index]
+    # return value at index in storage
+    return hash_table.storage[index].value
 
 
 def Testing():
